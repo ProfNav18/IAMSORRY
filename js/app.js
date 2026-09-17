@@ -70,7 +70,6 @@
   const unlockSub = el("unlockSub");
   const btnContinue = el("btnContinue");
   let pendingNext = null;
-  let autoAdvanceTimer = null;
 
   function spawnSparkles() {
     const card = unlockOverlay.querySelector(".unlock-card");
@@ -111,13 +110,9 @@
       spawnSparkles();
       btnContinue.hidden = false;
     }, 800);
-
-    clearTimeout(autoAdvanceTimer);
-    autoAdvanceTimer = setTimeout(advanceFromOverlay, 2600);
   }
 
   function advanceFromOverlay() {
-    clearTimeout(autoAdvanceTimer);
     if (!pendingNext) return;
     const next = pendingNext;
     pendingNext = null;
@@ -441,26 +436,37 @@
     video.hidden = true;
     driveFrame.hidden = true;
     fallback.hidden = true;
+    video.style.aspectRatio = "";
 
-    if (DRIVE_VIDEO_ID) {
-      driveFrame.src = `https://drive.google.com/file/d/${DRIVE_VIDEO_ID}/preview`;
-      driveFrame.hidden = false;
-    } else {
-      video.hidden = false;
-
-      function showFallback() {
-        video.hidden = true;
+    function showIframeFallback() {
+      video.hidden = true;
+      if (DRIVE_VIDEO_ID) {
+        driveFrame.src = `https://drive.google.com/file/d/${DRIVE_VIDEO_ID}/preview`;
+        driveFrame.hidden = false;
+      } else {
         fallback.hidden = false;
       }
-
-      video.onerror = showFallback;
-      video.querySelector("source").onerror = showFallback;
-      setTimeout(() => {
-        if (video.error || video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
-          showFallback();
-        }
-      }, 1200);
     }
+
+    const directSrc = DRIVE_VIDEO_ID
+      ? `https://drive.usercontent.google.com/download?id=${DRIVE_VIDEO_ID}&export=download&confirm=t`
+      : "assets/video.mp4";
+
+    video.hidden = false;
+    video.src = directSrc;
+    video.load();
+
+    video.onloadedmetadata = () => {
+      if (video.videoWidth && video.videoHeight) {
+        video.style.aspectRatio = `${video.videoWidth} / ${video.videoHeight}`;
+      }
+    };
+    video.onerror = showIframeFallback;
+    setTimeout(() => {
+      if (video.error || video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
+        showIframeFallback();
+      }
+    }, 2000);
 
     fireConfetti();
   }
