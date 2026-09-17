@@ -46,6 +46,7 @@
         <p class="game-sub">Tap the falling hearts. Catch <b id="l1Goal">12</b> to continue.</p>
         <div class="counter-row">
           <span class="badge" id="l1Count">Caught: 0 / 12</span>
+          <span class="badge lock-badge">🔒 Next level locked</span>
         </div>
         <div class="game-stage" id="l1Stage"></div>
       </div>
@@ -58,6 +59,7 @@
         <p class="game-sub">Flip two cards at a time. Find all <b>6</b> pairs.</p>
         <div class="counter-row">
           <span class="badge" id="l2Count">Pairs: 0 / 6</span>
+          <span class="badge lock-badge">🔒 Next level locked</span>
         </div>
         <div class="memory-grid" id="l2Grid"></div>
       </div>
@@ -68,6 +70,9 @@
       <div class="card game-card">
         <h2 class="game-title">Pop It In Order 🎈</h2>
         <p class="game-sub">Tap the balloons in order to spell it out.</p>
+        <div class="counter-row">
+          <span class="badge lock-badge">🔒 Next level locked</span>
+        </div>
         <div class="word-target" id="l3Target"></div>
         <div class="game-stage balloon-stage" id="l3Stage"></div>
       </div>
@@ -78,6 +83,9 @@
       <div class="card game-card center-card">
         <h2 class="game-title">Last One 🥹</h2>
         <p class="game-sub" id="l4Question">Do you forgive me?</p>
+        <div class="counter-row">
+          <span class="badge lock-badge">🔒 Surprise locked</span>
+        </div>
         <div class="forgive-stage" id="l4Stage">
           <button class="btn btn-primary btn-grow" id="btnYes">Yes 🥺💗</button>
           <button class="btn btn-runaway" id="btnNo">No</button>
