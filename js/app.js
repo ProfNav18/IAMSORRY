@@ -59,6 +59,73 @@
     if (name === "final") initFinal();
   }
 
+  /* ---------------- Unlock overlay (locked -> win -> unlock -> next) ---------------- */
+  const unlockOverlay = el("unlockOverlay");
+  const lockIcon = el("lockIcon");
+  const unlockTitle = el("unlockTitle");
+  const unlockSub = el("unlockSub");
+  const btnContinue = el("btnContinue");
+  let pendingNext = null;
+  let autoAdvanceTimer = null;
+
+  function spawnSparkles() {
+    const card = unlockOverlay.querySelector(".unlock-card");
+    const symbols = ["✨", "💗", "⭐", "💫"];
+    for (let i = 0; i < 10; i++) {
+      const s = document.createElement("span");
+      s.className = "sparkle-piece";
+      s.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+      s.style.left = "50%";
+      s.style.top = "70px";
+      const angle = Math.random() * Math.PI * 2;
+      const dist = 60 + Math.random() * 70;
+      s.style.setProperty("--sx", Math.cos(angle) * dist + "px");
+      s.style.setProperty("--sy", Math.sin(angle) * dist + "px");
+      card.appendChild(s);
+      s.addEventListener("animationend", () => s.remove());
+    }
+  }
+
+  function showUnlockOverlay(nextScreen, title, sub) {
+    pendingNext = nextScreen;
+    unlockTitle.textContent = title;
+    unlockSub.textContent = sub;
+    lockIcon.textContent = "🔒";
+    lockIcon.className = "lock-icon";
+    btnContinue.hidden = true;
+
+    unlockOverlay.hidden = false;
+    requestAnimationFrame(() => unlockOverlay.classList.add("show"));
+
+    setTimeout(() => {
+      lockIcon.classList.add("shaking");
+    }, 300);
+
+    setTimeout(() => {
+      lockIcon.textContent = "🔓";
+      lockIcon.className = "lock-icon unlocked";
+      spawnSparkles();
+      btnContinue.hidden = false;
+    }, 800);
+
+    clearTimeout(autoAdvanceTimer);
+    autoAdvanceTimer = setTimeout(advanceFromOverlay, 2600);
+  }
+
+  function advanceFromOverlay() {
+    clearTimeout(autoAdvanceTimer);
+    if (!pendingNext) return;
+    const next = pendingNext;
+    pendingNext = null;
+    unlockOverlay.classList.remove("show");
+    setTimeout(() => {
+      unlockOverlay.hidden = true;
+      goTo(next);
+    }, 250);
+  }
+
+  btnContinue.addEventListener("click", advanceFromOverlay);
+
   /* ---------------- Floating background hearts ---------------- */
   function initHeartsBg() {
     const bg = el("heartsBg");
@@ -125,7 +192,7 @@
 
         if (caught >= goal) {
           clearInterval(level1Timer);
-          setTimeout(() => goTo("level2"), 500);
+          showUnlockOverlay("level2", "Level 1 Complete! 💗", "Level 2 unlocked");
         }
       }
 
@@ -180,7 +247,7 @@
             matches++;
             countEl.textContent = `Pairs: ${matches} / 6`;
             if (matches === 6) {
-              setTimeout(() => goTo("level3"), 500);
+              showUnlockOverlay("level3", "Level 2 Complete! 💞", "Level 3 unlocked");
             }
           } else {
             setTimeout(() => {
@@ -261,7 +328,7 @@
           progressIndex++;
 
           if (progressIndex === word.length) {
-            setTimeout(() => goTo("level4"), 600);
+            showUnlockOverlay("level4", "Level 3 Complete! 🎈", "Level 4 unlocked");
           }
         } else {
           balloon.classList.add("wiggle");
@@ -320,7 +387,8 @@
       dodge();
     });
 
-    btnYes.onclick = () => goTo("final");
+    btnYes.onclick = () =>
+      showUnlockOverlay("final", "Level 4 Complete! 🥹", "Your surprise is unlocked");
   }
 
   /* ==================================================================

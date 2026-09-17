@@ -340,6 +340,71 @@ h1, h2{ font-family: "Baloo 2", "Poppins", sans-serif; }
   to{ transform: translateY(110vh) rotate(540deg); opacity: .9; }
 }
 
+/* Unlock overlay */
+.unlock-overlay{
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: 20px;
+  background: rgba(40, 10, 20, .55);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+.unlock-overlay[hidden]{ display:none; }
+.unlock-overlay.show{ opacity: 1; }
+
+.unlock-card{
+  position: relative;
+  width: min(360px, 100%);
+  background: #fff;
+  border-radius: 26px;
+  padding: 34px 26px 28px;
+  text-align:center;
+  box-shadow: 0 25px 60px rgba(0,0,0,.35);
+  transform: scale(.85);
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+.unlock-overlay.show .unlock-card{ transform: scale(1); }
+
+.lock-icon{
+  font-size: 60px;
+  line-height:1;
+  margin-bottom: 14px;
+  display:inline-block;
+}
+.lock-icon.shaking{ animation: lockShake .5s ease; }
+.lock-icon.unlocked{ animation: lockPop .5s cubic-bezier(.34,1.56,.64,1); }
+@keyframes lockShake{
+  0%,100%{ transform: rotate(0deg); }
+  20%{ transform: rotate(-12deg); }
+  40%{ transform: rotate(10deg); }
+  60%{ transform: rotate(-8deg); }
+  80%{ transform: rotate(6deg); }
+}
+@keyframes lockPop{
+  0%{ transform: scale(.6) rotate(-15deg); opacity:.4; }
+  60%{ transform: scale(1.3) rotate(8deg); opacity:1; }
+  100%{ transform: scale(1) rotate(0deg); }
+}
+
+.unlock-title{ margin: 0 0 6px; color: var(--pink-deep); font-size: 24px; }
+.unlock-sub{ margin: 0 0 20px; color: rgba(58,18,32,.75); }
+
+.sparkle-piece{
+  position:absolute;
+  font-size: 18px;
+  pointer-events:none;
+  animation: sparkleOut .7s ease forwards;
+}
+@keyframes sparkleOut{
+  0%{ transform: translate(0,0) scale(.6); opacity:1; }
+  100%{ transform: translate(var(--sx), var(--sy)) scale(1.1); opacity:0; }
+}
+
 .site-footer{
   position: relative;
   z-index:1;
