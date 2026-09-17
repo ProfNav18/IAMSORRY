@@ -164,19 +164,38 @@
 
     const symbols = ["💗", "💖", "💕", "💘"];
     const stageWidth = () => stage.clientWidth;
-    const stageHeight = () => stage.clientHeight;
+    const HEART_SIZE = 46;
+    const activeLefts = [];
+
+    function pickLeft() {
+      const maxLeft = Math.max(stageWidth() - HEART_SIZE, 10);
+      let left = Math.random() * maxLeft;
+      for (let attempt = 0; attempt < 6; attempt++) {
+        const tooClose = activeLefts.some((l) => Math.abs(l - left) < HEART_SIZE + 14);
+        if (!tooClose) break;
+        left = Math.random() * maxLeft;
+      }
+      return left;
+    }
 
     function spawnHeart() {
       if (caught >= goal) return;
       const heart = document.createElement("div");
       heart.className = "falling-heart";
       heart.textContent = symbols[Math.floor(Math.random() * symbols.length)];
-      const maxLeft = Math.max(stageWidth() - 36, 10);
-      heart.style.left = Math.random() * maxLeft + "px";
-      const duration = 3.2 + Math.random() * 2.2;
+      const left = pickLeft();
+      activeLefts.push(left);
+      heart.style.left = left + "px";
+      const duration = 3.6 + Math.random() * 2.2;
       heart.style.animationDuration = duration + "s";
 
-      heart.addEventListener("animationend", () => heart.remove());
+      function cleanup() {
+        const idx = activeLefts.indexOf(left);
+        if (idx !== -1) activeLefts.splice(idx, 1);
+        heart.remove();
+      }
+
+      heart.addEventListener("animationend", cleanup);
 
       function catchHeart(e) {
         e.preventDefault();
@@ -192,11 +211,15 @@
         stage.appendChild(burst);
         burst.addEventListener("animationend", () => burst.remove());
 
-        heart.remove();
+        cleanup();
 
         if (caught >= goal) {
           clearInterval(level1Timer);
-          showUnlockOverlay("level2", "Level 1 Complete! 💗", "Level 2 unlocked");
+          showUnlockOverlay(
+            "level2",
+            "Level 1 Complete! 💗",
+            "Every heart you caught is a little piece of how much I adore you."
+          );
         }
       }
 
@@ -204,8 +227,8 @@
       stage.appendChild(heart);
     }
 
-    for (let i = 0; i < 3; i++) setTimeout(spawnHeart, i * 300);
-    level1Timer = setInterval(spawnHeart, 850);
+    for (let i = 0; i < 4; i++) setTimeout(spawnHeart, i * 280);
+    level1Timer = setInterval(spawnHeart, 650);
   }
 
   /* ==================================================================
@@ -251,7 +274,11 @@
             matches++;
             countEl.textContent = `Pairs: ${matches} / 6`;
             if (matches === 6) {
-              showUnlockOverlay("level3", "Level 2 Complete! 💞", "Level 3 unlocked");
+              showUnlockOverlay(
+                "level3",
+                "Level 2 Complete! 💞",
+                "You matched every pair, just like how well we fit together."
+              );
             }
           } else {
             setTimeout(() => {
@@ -332,7 +359,11 @@
           progressIndex++;
 
           if (progressIndex === word.length) {
-            showUnlockOverlay("level4", "Level 3 Complete! 🎈", "Level 4 unlocked");
+            showUnlockOverlay(
+              "level4",
+              "Level 3 Complete! 🎈",
+              "I really am sorry, Ammu. Thank you for still playing along with me."
+            );
           }
         } else {
           balloon.classList.add("wiggle");
@@ -392,7 +423,11 @@
     });
 
     btnYes.onclick = () =>
-      showUnlockOverlay("final", "Level 4 Complete! 🥹", "Your surprise is unlocked");
+      showUnlockOverlay(
+        "final",
+        "Level 4 Complete! 🥹",
+        "You forgiving me means more than I can put into words. I love you, Ammu."
+      );
   }
 
   /* ==================================================================

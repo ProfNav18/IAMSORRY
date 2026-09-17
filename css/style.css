@@ -170,10 +170,16 @@ h1, h2{ font-family: "Baloo 2", "Poppins", sans-serif; }
 /* Level 1: falling hearts */
 .falling-heart{
   position:absolute;
-  top: -40px;
-  font-size: 30px;
+  top: -46px;
+  width: 46px;
+  height: 46px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size: 28px;
   cursor:pointer;
   user-select:none;
+  touch-action: none;
   animation: fallDown linear forwards;
   filter: drop-shadow(0 6px 10px rgba(0,0,0,.12));
 }
@@ -322,6 +328,8 @@ h1, h2{ font-family: "Baloo 2", "Poppins", sans-serif; }
 }
 .video-wrap video{ width:100%; display:block; max-height: 60vh; }
 .video-wrap iframe{ width:100%; aspect-ratio: 16 / 9; display:block; border:0; }
+.video-wrap video[hidden],
+.video-wrap iframe[hidden]{ display:none; }
 .video-fallback{
   padding: 40px 12px;
   color: rgba(255,255,255,.85);
