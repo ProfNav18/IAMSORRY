@@ -1,0 +1,381 @@
+(() => {
+  "use strict";
+
+  const SCREENS = ["landing", "level1", "level2", "level3", "level4", "final"];
+  const STORAGE_KEY = "iamsorry:progress";
+
+  const el = (id) => document.getElementById(id);
+  const screens = {
+    landing: el("screen-landing"),
+    level1: el("screen-level1"),
+    level2: el("screen-level2"),
+    level3: el("screen-level3"),
+    level4: el("screen-level4"),
+    final: el("screen-final"),
+  };
+  const progressBar = el("progress");
+  const progressLabel = el("progressLabel");
+  const dots = document.querySelectorAll(".dot");
+
+  function getFurthestUnlocked() {
+    const saved = parseInt(localStorage.getItem(STORAGE_KEY), 10);
+    if (Number.isInteger(saved) && saved >= 0 && saved < SCREENS.length) return saved;
+    return 0;
+  }
+
+  function saveProgress(index) {
+    const current = getFurthestUnlocked();
+    if (index > current) localStorage.setItem(STORAGE_KEY, String(index));
+  }
+
+  function showScreen(name) {
+    Object.entries(screens).forEach(([key, node]) => {
+      node.hidden = key !== name;
+    });
+
+    const levelNum = { level1: 1, level2: 2, level3: 3, level4: 4 }[name];
+    if (levelNum) {
+      progressBar.hidden = false;
+      progressLabel.textContent = `Level ${levelNum} of 4`;
+      dots.forEach((dot) => {
+        const n = parseInt(dot.dataset.dot, 10);
+        dot.classList.toggle("done", n < levelNum);
+        dot.classList.toggle("active", n === levelNum);
+      });
+    } else {
+      progressBar.hidden = true;
+    }
+
+    saveProgress(SCREENS.indexOf(name));
+    window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
+  }
+
+  function goTo(name) {
+    showScreen(name);
+    if (name === "level1") initLevel1();
+    if (name === "level2") initLevel2();
+    if (name === "level3") initLevel3();
+    if (name === "level4") initLevel4();
+    if (name === "final") initFinal();
+  }
+
+  /* ---------------- Floating background hearts ---------------- */
+  function initHeartsBg() {
+    const bg = el("heartsBg");
+    const symbols = ["💗", "💕", "💖", "💘", "💝"];
+    const count = window.innerWidth < 500 ? 12 : 18;
+    for (let i = 0; i < count; i++) {
+      const span = document.createElement("span");
+      span.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+      span.style.left = Math.random() * 100 + "vw";
+      span.style.setProperty("--drift", (Math.random() * 60 - 30) + "px");
+      span.style.animationDuration = 10 + Math.random() * 12 + "s";
+      span.style.animationDelay = Math.random() * 14 + "s";
+      span.style.fontSize = 16 + Math.random() * 16 + "px";
+      bg.appendChild(span);
+    }
+  }
+
+  /* ==================================================================
+     LEVEL 1 — Catch the Hearts
+  ================================================================== */
+  let level1Timer = null;
+
+  function initLevel1() {
+    const stage = el("l1Stage");
+    const countEl = el("l1Count");
+    const goal = parseInt(el("l1Goal").textContent, 10);
+    stage.innerHTML = "";
+    let caught = 0;
+    countEl.textContent = `Caught: 0 / ${goal}`;
+
+    clearInterval(level1Timer);
+
+    const symbols = ["💗", "💖", "💕", "💘"];
+    const stageWidth = () => stage.clientWidth;
+    const stageHeight = () => stage.clientHeight;
+
+    function spawnHeart() {
+      if (caught >= goal) return;
+      const heart = document.createElement("div");
+      heart.className = "falling-heart";
+      heart.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+      const maxLeft = Math.max(stageWidth() - 36, 10);
+      heart.style.left = Math.random() * maxLeft + "px";
+      const duration = 3.2 + Math.random() * 2.2;
+      heart.style.animationDuration = duration + "s";
+
+      heart.addEventListener("animationend", () => heart.remove());
+
+      function catchHeart(e) {
+        e.preventDefault();
+        if (caught >= goal) return;
+        caught++;
+        countEl.textContent = `Caught: ${caught} / ${goal}`;
+
+        const burst = document.createElement("div");
+        burst.className = "pop-burst";
+        burst.textContent = "✨";
+        burst.style.left = heart.style.left;
+        burst.style.top = heart.getBoundingClientRect().top - stage.getBoundingClientRect().top + "px";
+        stage.appendChild(burst);
+        burst.addEventListener("animationend", () => burst.remove());
+
+        heart.remove();
+
+        if (caught >= goal) {
+          clearInterval(level1Timer);
+          setTimeout(() => goTo("level2"), 500);
+        }
+      }
+
+      heart.addEventListener("pointerdown", catchHeart, { once: true });
+      stage.appendChild(heart);
+    }
+
+    for (let i = 0; i < 3; i++) setTimeout(spawnHeart, i * 300);
+    level1Timer = setInterval(spawnHeart, 850);
+  }
+
+  /* ==================================================================
+     LEVEL 2 — Memory Match
+  ================================================================== */
+  function initLevel2() {
+    const grid = el("l2Grid");
+    const countEl = el("l2Count");
+    grid.innerHTML = "";
+
+    const icons = ["💗", "💖", "💕", "💘", "💝", "💓"];
+    const deck = [...icons, ...icons]
+      .map((v) => ({ v, sort: Math.random() }))
+      .sort((a, b) => a.sort - b.sort)
+      .map((x) => x.v);
+
+    let matches = 0;
+    let flipped = [];
+    let lock = false;
+    countEl.textContent = "Pairs: 0 / 6";
+
+    deck.forEach((icon) => {
+      const card = document.createElement("div");
+      card.className = "mem-card";
+      card.innerHTML = `<span class="face">${icon}</span>`;
+      card.dataset.icon = icon;
+
+      card.addEventListener("click", () => {
+        if (lock) return;
+        if (card.classList.contains("flipped") || card.classList.contains("matched")) return;
+
+        card.classList.add("flipped");
+        flipped.push(card);
+
+        if (flipped.length === 2) {
+          lock = true;
+          const [a, b] = flipped;
+          if (a.dataset.icon === b.dataset.icon) {
+            a.classList.add("matched");
+            b.classList.add("matched");
+            flipped = [];
+            lock = false;
+            matches++;
+            countEl.textContent = `Pairs: ${matches} / 6`;
+            if (matches === 6) {
+              setTimeout(() => goTo("level3"), 500);
+            }
+          } else {
+            setTimeout(() => {
+              a.classList.add("shake");
+              b.classList.add("shake");
+              setTimeout(() => {
+                a.classList.remove("flipped", "shake");
+                b.classList.remove("flipped", "shake");
+                flipped = [];
+                lock = false;
+              }, 350);
+            }, 450);
+          }
+        }
+      });
+
+      grid.appendChild(card);
+    });
+  }
+
+  /* ==================================================================
+     LEVEL 3 — Pop balloons spelling SORRY
+  ================================================================== */
+  function initLevel3() {
+    const target = el("l3Target");
+    const stage = el("l3Stage");
+    target.innerHTML = "";
+    stage.innerHTML = "";
+
+    const word = ["S", "O", "R", "R", "Y"];
+    const colors = ["#ff6b8b", "#ff8fa3", "#ff5c7a", "#ffa4b8", "#ff3d68"];
+    let progressIndex = 0;
+
+    word.forEach((letter, i) => {
+      const slot = document.createElement("div");
+      slot.className = "word-slot";
+      slot.dataset.index = i;
+      target.appendChild(slot);
+    });
+
+    const shuffled = word
+      .map((v) => ({ v, sort: Math.random() }))
+      .sort((a, b) => a.sort - b.sort)
+      .map((x) => x.v);
+
+    const stageWidth = () => stage.clientWidth;
+    const stageHeight = () => stage.clientHeight;
+    const positions = [];
+    const cols = 5;
+    shuffled.forEach((letter, i) => {
+      const col = i % cols;
+      const cellWidth = (stageWidth() || 300) / cols;
+      const left = col * cellWidth + cellWidth / 2 - 29 + (Math.random() * 16 - 8);
+      const top = 20 + Math.random() * Math.max((stageHeight() || 300) - 120, 60);
+      positions.push({ left, top });
+    });
+
+    shuffled.forEach((letter, i) => {
+      const balloon = document.createElement("div");
+      balloon.className = "balloon";
+      balloon.textContent = letter;
+      balloon.dataset.letter = letter;
+      balloon.style.background = colors[i % colors.length];
+      balloon.style.left = Math.max(positions[i].left, 6) + "px";
+      balloon.style.top = positions[i].top + "px";
+      balloon.style.animationDelay = (Math.random() * 2).toFixed(2) + "s";
+
+      balloon.addEventListener("pointerdown", (e) => {
+        e.preventDefault();
+        if (balloon.classList.contains("popped")) return;
+        const needed = word[progressIndex];
+
+        if (letter === needed) {
+          balloon.classList.add("popped");
+          const slot = target.querySelector(`[data-index="${progressIndex}"]`);
+          slot.textContent = letter;
+          slot.classList.add("filled");
+          progressIndex++;
+
+          if (progressIndex === word.length) {
+            setTimeout(() => goTo("level4"), 600);
+          }
+        } else {
+          balloon.classList.add("wiggle");
+          setTimeout(() => balloon.classList.remove("wiggle"), 300);
+        }
+      });
+
+      stage.appendChild(balloon);
+    });
+  }
+
+  /* ==================================================================
+     LEVEL 4 — Forgive-o-meter (runaway "No" button)
+  ================================================================== */
+  function initLevel4() {
+    const stage = el("l4Stage");
+    const btnYes = el("btnYes");
+    const btnNo = el("btnNo");
+    let scale = 1;
+    let dodges = 0;
+
+    btnYes.style.transform = "scale(1)";
+    btnNo.style.position = "static";
+    btnNo.style.transform = "none";
+
+    function dodge() {
+      dodges++;
+      if (dodges > 6) {
+        btnNo.style.display = "none";
+        return;
+      }
+      const stageRect = stage.getBoundingClientRect();
+      const btnRect = btnNo.getBoundingClientRect();
+      const maxX = Math.max(stageRect.width - btnRect.width, 10);
+      const maxY = Math.max(stageRect.height - btnRect.height, 10);
+      const x = Math.random() * maxX;
+      const y = Math.random() * maxY;
+
+      btnNo.style.position = "absolute";
+      btnNo.style.left = x + "px";
+      btnNo.style.top = y + "px";
+
+      scale = Math.min(scale + 0.08, 1.6);
+      btnYes.style.transform = `scale(${scale})`;
+    }
+
+    const dodgeEvents = ["pointerenter", "touchstart"];
+    dodgeEvents.forEach((evt) =>
+      btnNo.addEventListener(evt, (e) => {
+        e.preventDefault();
+        dodge();
+      })
+    );
+    btnNo.addEventListener("click", (e) => {
+      e.preventDefault();
+      dodge();
+    });
+
+    btnYes.onclick = () => goTo("final");
+  }
+
+  /* ==================================================================
+     FINAL — video reveal + confetti
+  ================================================================== */
+  function initFinal() {
+    const video = el("apologyVideo");
+    const fallback = el("videoFallback");
+
+    video.hidden = false;
+    fallback.hidden = true;
+
+    function showFallback() {
+      video.hidden = true;
+      fallback.hidden = false;
+    }
+
+    video.onerror = showFallback;
+    video.querySelector("source").onerror = showFallback;
+    setTimeout(() => {
+      if (video.error || video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
+        showFallback();
+      }
+    }, 1200);
+
+    fireConfetti();
+  }
+
+  function fireConfetti() {
+    const layer = el("confettiLayer");
+    const colors = ["#ff6b8b", "#ff8fa3", "#ffd1dc", "#ffffff", "#ff3d68"];
+    const count = 60;
+    for (let i = 0; i < count; i++) {
+      const piece = document.createElement("div");
+      piece.className = "confetti-piece";
+      const size = 6 + Math.random() * 6;
+      piece.style.width = size + "px";
+      piece.style.height = size * 1.6 + "px";
+      piece.style.left = Math.random() * 100 + "vw";
+      piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+      piece.style.animationDuration = 2.5 + Math.random() * 2 + "s";
+      piece.style.animationDelay = Math.random() * 0.6 + "s";
+      layer.appendChild(piece);
+      piece.addEventListener("animationend", () => piece.remove());
+    }
+  }
+
+  /* ---------------- Wire up static buttons ---------------- */
+  el("btnStart").addEventListener("click", () => goTo("level1"));
+  el("btnReplay").addEventListener("click", () => {
+    localStorage.removeItem(STORAGE_KEY);
+    goTo("landing");
+  });
+
+  /* ---------------- Boot ---------------- */
+  initHeartsBg();
+  goTo(SCREENS[getFurthestUnlocked()]);
+})();
