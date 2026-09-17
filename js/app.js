@@ -4,6 +4,10 @@
   const SCREENS = ["landing", "level1", "level2", "level3", "level4", "final"];
   const STORAGE_KEY = "iamsorry:progress";
 
+  // Google Drive file ID for the final-reveal video (from the share link).
+  // Leave empty to fall back to a local assets/video.mp4 file instead.
+  const DRIVE_VIDEO_ID = "1Amrl1-tanK3THd7aKxqTjL2tP1uqIS93";
+
   const el = (id) => document.getElementById(id);
   const screens = {
     landing: el("screen-landing"),
@@ -396,23 +400,32 @@
   ================================================================== */
   function initFinal() {
     const video = el("apologyVideo");
+    const driveFrame = el("driveVideoFrame");
     const fallback = el("videoFallback");
 
-    video.hidden = false;
+    video.hidden = true;
+    driveFrame.hidden = true;
     fallback.hidden = true;
 
-    function showFallback() {
-      video.hidden = true;
-      fallback.hidden = false;
-    }
+    if (DRIVE_VIDEO_ID) {
+      driveFrame.src = `https://drive.google.com/file/d/${DRIVE_VIDEO_ID}/preview`;
+      driveFrame.hidden = false;
+    } else {
+      video.hidden = false;
 
-    video.onerror = showFallback;
-    video.querySelector("source").onerror = showFallback;
-    setTimeout(() => {
-      if (video.error || video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
-        showFallback();
+      function showFallback() {
+        video.hidden = true;
+        fallback.hidden = false;
       }
-    }, 1200);
+
+      video.onerror = showFallback;
+      video.querySelector("source").onerror = showFallback;
+      setTimeout(() => {
+        if (video.error || video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
+          showFallback();
+        }
+      }, 1200);
+    }
 
     fireConfetti();
   }

@@ -321,6 +321,7 @@ h1, h2{ font-family: "Baloo 2", "Poppins", sans-serif; }
   box-shadow: 0 14px 30px rgba(0,0,0,.25);
 }
 .video-wrap video{ width:100%; display:block; max-height: 60vh; }
+.video-wrap iframe{ width:100%; aspect-ratio: 16 / 9; display:block; border:0; }
 .video-fallback{
   padding: 40px 12px;
   color: rgba(255,255,255,.85);

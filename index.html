@@ -101,9 +101,16 @@
         <p class="subtitle">You played through all of it just for me.<br>Now here's what I really wanted to say...</p>
 
         <div class="video-wrap" id="videoWrap">
-          <video id="apologyVideo" controls playsinline preload="metadata" poster="">
+          <video id="apologyVideo" controls playsinline preload="metadata" poster="" hidden>
             <source src="assets/video.mp4" type="video/mp4" />
           </video>
+          <iframe
+            id="driveVideoFrame"
+            allow="autoplay"
+            allowfullscreen
+            frameborder="0"
+            hidden
+          ></iframe>
           <div class="video-fallback" id="videoFallback" hidden>
             <div class="big-emoji">🎥</div>
             <p>Video coming soon...</p>
