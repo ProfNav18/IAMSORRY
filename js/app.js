@@ -428,14 +428,21 @@
   /* ==================================================================
      FINAL — video reveal + confetti
   ================================================================== */
+  const isMobile =
+    /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+    (window.matchMedia && window.matchMedia("(pointer: coarse)").matches);
+
   function initFinal() {
     const video = el("apologyVideo");
     const driveFrame = el("driveVideoFrame");
     const fallback = el("videoFallback");
 
+    const videoHint = el("videoHint");
+
     video.hidden = true;
     driveFrame.hidden = true;
     fallback.hidden = true;
+    videoHint.hidden = true;
     video.style.aspectRatio = "";
 
     function showIframeFallback() {
@@ -443,9 +450,21 @@
       if (DRIVE_VIDEO_ID) {
         driveFrame.src = `https://drive.google.com/file/d/${DRIVE_VIDEO_ID}/preview`;
         driveFrame.hidden = false;
+        videoHint.hidden = false;
       } else {
         fallback.hidden = false;
       }
+    }
+
+    // The direct Drive stream trick relies on range-request support and a
+    // cookie-based confirmation flow that mobile browsers often break in
+    // ways that never fire an error/timeout the video element reports —
+    // it just hangs. Google's own preview iframe is built to work reliably
+    // across mobile browsers, so route mobile there directly.
+    if (isMobile) {
+      showIframeFallback();
+      fireConfetti();
+      return;
     }
 
     const directSrc = DRIVE_VIDEO_ID
@@ -463,10 +482,10 @@
     };
     video.onerror = showIframeFallback;
     setTimeout(() => {
-      if (video.error || video.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
+      if (video.error || video.readyState < 1) {
         showIframeFallback();
       }
-    }, 2000);
+    }, 4000);
 
     fireConfetti();
   }
