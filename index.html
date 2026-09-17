@@ -102,19 +102,15 @@
 
         <div class="video-wrap" id="videoWrap">
           <video id="apologyVideo" controls playsinline preload="metadata" poster="" hidden></video>
-          <iframe
-            id="driveVideoFrame"
-            allow="autoplay; fullscreen"
-            allowfullscreen
-            frameborder="0"
-            hidden
-          ></iframe>
+          <a class="video-open-card" id="videoOpenCard" target="_blank" rel="noopener" hidden>
+            <div class="video-open-play">▶</div>
+            <div class="video-open-text">Tap to watch my message</div>
+          </a>
           <div class="video-fallback" id="videoFallback" hidden>
             <div class="big-emoji">🎥</div>
             <p>Video coming soon...</p>
           </div>
         </div>
-        <p class="video-hint" id="videoHint" hidden>👆 Tap the video once, then tap ▶ to play</p>
 
         <p class="final-note">I'm sorry, Ammu. I love you. 💌</p>
         <button class="btn" id="btnReplay">Play again from the start</button>

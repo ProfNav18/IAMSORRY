@@ -434,39 +434,42 @@
 
   function initFinal() {
     const video = el("apologyVideo");
-    const driveFrame = el("driveVideoFrame");
+    const openCard = el("videoOpenCard");
     const fallback = el("videoFallback");
 
-    const videoHint = el("videoHint");
-
     video.hidden = true;
-    driveFrame.hidden = true;
+    openCard.hidden = true;
     fallback.hidden = true;
-    videoHint.hidden = true;
     video.style.aspectRatio = "";
 
-    function showIframeFallback() {
+    function showOpenCard() {
       video.hidden = true;
       if (DRIVE_VIDEO_ID) {
-        driveFrame.src = `https://drive.google.com/file/d/${DRIVE_VIDEO_ID}/preview`;
-        driveFrame.hidden = false;
-        videoHint.hidden = false;
+        openCard.href = `https://drive.google.com/file/d/${DRIVE_VIDEO_ID}/view`;
+        openCard.hidden = false;
       } else {
         fallback.hidden = false;
       }
     }
 
-    // The direct Drive stream trick relies on range-request support and a
-    // cookie-based confirmation flow that mobile browsers often break in
-    // ways that never fire an error/timeout the video element reports —
-    // it just hangs. Google's own preview iframe is built to work reliably
-    // across mobile browsers, so route mobile there directly.
+    // Google's own iframe embed for Drive video has real limitations we
+    // can't work around from a parent page (cross-origin: we can't touch
+    // its internal controls at all) — the play control needs a focus tap
+    // before it registers, it doesn't fit non-16:9 source video well, and
+    // its "hide controls after mouse leaves" behavior never triggers on a
+    // touchscreen since there's no mouse to leave. So on mobile, skip
+    // embedding entirely and open Drive's real mobile video viewer
+    // instead, which is built and tested for touch.
     if (isMobile) {
-      showIframeFallback();
+      showOpenCard();
       fireConfetti();
       return;
     }
 
+    // The direct Drive stream trick relies on range-request support and a
+    // cookie-based confirmation flow that some browsers break in ways
+    // that never fire an error/timeout the video element reports — it
+    // just hangs — hence the fallback below.
     const directSrc = DRIVE_VIDEO_ID
       ? `https://drive.usercontent.google.com/download?id=${DRIVE_VIDEO_ID}&export=download&confirm=t`
       : "assets/video.mp4";
@@ -480,10 +483,10 @@
         video.style.aspectRatio = `${video.videoWidth} / ${video.videoHeight}`;
       }
     };
-    video.onerror = showIframeFallback;
+    video.onerror = showOpenCard;
     setTimeout(() => {
       if (video.error || video.readyState < 1) {
-        showIframeFallback();
+        showOpenCard();
       }
     }, 4000);
 
