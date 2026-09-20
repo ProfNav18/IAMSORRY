@@ -1,14 +1,13 @@
-# I Appreciate You ☕
+# I'm Sorry 💗
 
-A cute, gamified mobile-first appreciation page with an 80s coffee-note theme. She plays
-through 4 short, un-loseable mini games (catch the little things, match the memories, pop
-the balloons, one last thing) and then unlocks a final coffee-stained letter that unfolds
-on tap — fully self-contained, no video hosting or external accounts needed.
+A cute, gamified mobile-first apology page. She plays through 4 short, un-loseable mini
+games (catch the hearts, memory match, pop the balloons, forgive-o-meter) and then unlocks
+a final video message.
 
-## Personalize it
+## Add your video
 
-Edit the letter text directly in `index.html` inside `#letterPaper .letter-text` — it's
-plain HTML paragraphs. The signature line and footer both say "Purush"; update those too.
+Drop your video file at `assets/video.mp4` (the page already looks for it). If it's
+missing, the final screen shows a friendly placeholder instead of a broken player.
 
 ## Run locally
 
