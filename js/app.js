@@ -2,11 +2,7 @@
   "use strict";
 
   const SCREENS = ["landing", "level1", "level2", "level3", "level4", "final"];
-  const STORAGE_KEY = "iamsorry:progress";
-
-  // Google Drive file ID for the final-reveal video (from the share link).
-  // Leave empty to fall back to a local assets/video.mp4 file instead.
-  const DRIVE_VIDEO_ID = "1Amrl1-tanK3THd7aKxqTjL2tP1uqIS93";
+  const STORAGE_KEY = "appreciate:progress";
 
   const el = (id) => document.getElementById(id);
   const screens = {
@@ -125,10 +121,10 @@
 
   btnContinue.addEventListener("click", advanceFromOverlay);
 
-  /* ---------------- Floating background hearts ---------------- */
+  /* ---------------- Floating background ambience ---------------- */
   function initHeartsBg() {
     const bg = el("heartsBg");
-    const symbols = ["💗", "💕", "💖", "💘", "💝"];
+    const symbols = ["☕", "🤎", "💛", "🧡", "✨"];
     const count = window.innerWidth < 500 ? 12 : 18;
     for (let i = 0; i < count; i++) {
       const span = document.createElement("span");
@@ -143,7 +139,7 @@
   }
 
   /* ==================================================================
-     LEVEL 1 — Catch the Hearts
+     LEVEL 1 — Catch the Little Things
   ================================================================== */
   let level1Timer = null;
 
@@ -157,7 +153,7 @@
 
     clearInterval(level1Timer);
 
-    const symbols = ["💗", "💖", "💕", "💘"];
+    const symbols = ["☕", "🤎", "💛", "🧡"];
     const stageWidth = () => stage.clientWidth;
     const HEART_SIZE = 46;
     const activeLefts = [];
@@ -212,8 +208,8 @@
           clearInterval(level1Timer);
           showUnlockOverlay(
             "level2",
-            "Level 1 Complete! 💗",
-            "Every heart you caught is a little piece of how much I adore you."
+            "Level 1 Complete! ☕",
+            "Every little thing you do for me doesn't go unnoticed."
           );
         }
       }
@@ -227,14 +223,14 @@
   }
 
   /* ==================================================================
-     LEVEL 2 — Memory Match
+     LEVEL 2 — Match the Memories
   ================================================================== */
   function initLevel2() {
     const grid = el("l2Grid");
     const countEl = el("l2Count");
     grid.innerHTML = "";
 
-    const icons = ["💗", "💖", "💕", "💘", "💝", "💓"];
+    const icons = ["☕", "🤎", "💛", "🧡", "🍪", "✨"];
     const deck = [...icons, ...icons]
       .map((v) => ({ v, sort: Math.random() }))
       .sort((a, b) => a.sort - b.sort)
@@ -271,8 +267,8 @@
             if (matches === 6) {
               showUnlockOverlay(
                 "level3",
-                "Level 2 Complete! 💞",
-                "You matched every pair, just like how well we fit together."
+                "Level 2 Complete! 🤎",
+                "Every memory with you is one I hold onto."
               );
             }
           } else {
@@ -295,7 +291,7 @@
   }
 
   /* ==================================================================
-     LEVEL 3 — Pop balloons spelling SORRY
+     LEVEL 3 — Pop balloons spelling THANKS
   ================================================================== */
   function initLevel3() {
     const target = el("l3Target");
@@ -303,8 +299,8 @@
     target.innerHTML = "";
     stage.innerHTML = "";
 
-    const word = ["S", "O", "R", "R", "Y"];
-    const colors = ["#ff6b8b", "#ff8fa3", "#ff5c7a", "#ffa4b8", "#ff3d68"];
+    const word = ["T", "H", "A", "N", "K", "S"];
+    const colors = ["#b9531f", "#8b5a2b", "#c99b62", "#d9a441", "#a97b45", "#c1502e"];
     let progressIndex = 0;
 
     word.forEach((letter, i) => {
@@ -357,7 +353,7 @@
             showUnlockOverlay(
               "level4",
               "Level 3 Complete! 🎈",
-              "I really am sorry, Ammu. Thank you for still playing along with me."
+              "You make ordinary days feel worth writing about."
             );
           }
         } else {
@@ -371,7 +367,7 @@
   }
 
   /* ==================================================================
-     LEVEL 4 — Forgive-o-meter (runaway "No" button)
+     LEVEL 4 — One Last Thing (runaway "not really" button)
   ================================================================== */
   function initLevel4() {
     const stage = el("l4Stage");
@@ -420,82 +416,34 @@
     btnYes.onclick = () =>
       showUnlockOverlay(
         "final",
-        "Level 4 Complete! 🥹",
-        "You forgiving me means more than I can put into words. I love you, Ammu."
+        "Level 4 Complete! 💛",
+        "Now let me show you something I wrote for you."
       );
   }
 
   /* ==================================================================
-     FINAL — video reveal + confetti
+     FINAL — coffee-stained letter reveal + confetti
   ================================================================== */
-  const isMobile =
-    /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
-    (window.matchMedia && window.matchMedia("(pointer: coarse)").matches);
-
   function initFinal() {
-    const video = el("apologyVideo");
-    const openCard = el("videoOpenCard");
-    const fallback = el("videoFallback");
+    const crumpled = el("letterCrumpled");
+    const paper = el("letterPaper");
 
-    video.hidden = true;
-    openCard.hidden = true;
-    fallback.hidden = true;
-    video.style.aspectRatio = "";
+    paper.hidden = true;
+    crumpled.hidden = false;
 
-    function showOpenCard() {
-      video.hidden = true;
-      if (DRIVE_VIDEO_ID) {
-        openCard.href = `https://drive.google.com/file/d/${DRIVE_VIDEO_ID}/view`;
-        openCard.hidden = false;
-      } else {
-        fallback.hidden = false;
-      }
-    }
-
-    // Google's own iframe embed for Drive video has real limitations we
-    // can't work around from a parent page (cross-origin: we can't touch
-    // its internal controls at all) — the play control needs a focus tap
-    // before it registers, it doesn't fit non-16:9 source video well, and
-    // its "hide controls after mouse leaves" behavior never triggers on a
-    // touchscreen since there's no mouse to leave. So on mobile, skip
-    // embedding entirely and open Drive's real mobile video viewer
-    // instead, which is built and tested for touch.
-    if (isMobile) {
-      showOpenCard();
-      fireConfetti();
-      return;
-    }
-
-    // The direct Drive stream trick relies on range-request support and a
-    // cookie-based confirmation flow that some browsers break in ways
-    // that never fire an error/timeout the video element reports — it
-    // just hangs — hence the fallback below.
-    const directSrc = DRIVE_VIDEO_ID
-      ? `https://drive.usercontent.google.com/download?id=${DRIVE_VIDEO_ID}&export=download&confirm=t`
-      : "assets/video.mp4";
-
-    video.hidden = false;
-    video.src = directSrc;
-    video.load();
-
-    video.onloadedmetadata = () => {
-      if (video.videoWidth && video.videoHeight) {
-        video.style.aspectRatio = `${video.videoWidth} / ${video.videoHeight}`;
-      }
+    // onclick (not addEventListener) so replaying the game never stacks a
+    // second handler on the same button.
+    crumpled.onclick = () => {
+      crumpled.hidden = true;
+      paper.hidden = false;
     };
-    video.onerror = showOpenCard;
-    setTimeout(() => {
-      if (video.error || video.readyState < 1) {
-        showOpenCard();
-      }
-    }, 4000);
 
     fireConfetti();
   }
 
   function fireConfetti() {
     const layer = el("confettiLayer");
-    const colors = ["#ff6b8b", "#ff8fa3", "#ffd1dc", "#ffffff", "#ff3d68"];
+    const colors = ["#b9531f", "#8b5a2b", "#d9a441", "#f6e8c8", "#c1502e"];
     const count = 60;
     for (let i = 0; i < count; i++) {
       const piece = document.createElement("div");

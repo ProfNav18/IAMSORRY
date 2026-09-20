@@ -1,11 +1,12 @@
 :root{
-  --pink-1: #ffe1ea;
-  --pink-2: #ff8fa3;
-  --pink-3: #ff5c7a;
-  --pink-deep: #ff3d68;
-  --ink: #3a1220;
-  --white-glass: rgba(255,255,255,.72);
-  --shadow: 0 18px 45px rgba(255, 61, 104, .22);
+  --cream-1: #f6e8c8;
+  --cream-2: #e3c68f;
+  --coffee-mid: #8b5a2b;
+  --coffee-deep: #b9531f;
+  --coffee-dark: #4a2c17;
+  --ink: #3d2415;
+  --paper-glass: rgba(255,250,235,.78);
+  --shadow: 0 18px 45px rgba(139, 90, 43, .28);
 }
 
 *{ box-sizing: border-box; }
@@ -14,15 +15,15 @@ html, body{
   margin:0;
   padding:0;
   min-height: 100vh;
-  font-family: "Poppins", system-ui, sans-serif;
+  font-family: "Special Elite", "Courier New", monospace;
   color: var(--ink);
-  background: linear-gradient(160deg, var(--pink-1), var(--pink-2) 55%, var(--pink-3));
+  background: linear-gradient(160deg, var(--cream-1), var(--cream-2) 55%, var(--coffee-mid));
   overflow-x: hidden;
 }
 
-h1, h2{ font-family: "Baloo 2", "Poppins", sans-serif; }
+h1, h2{ font-family: "Caveat", "Special Elite", cursive; font-weight: 700; }
 
-/* Floating hearts background */
+/* Floating ambient background (coffee + warm hearts) */
 .hearts-bg{
   position: fixed;
   inset: 0;
@@ -34,9 +35,9 @@ h1, h2{ font-family: "Baloo 2", "Poppins", sans-serif; }
   position: absolute;
   bottom: -10vh;
   font-size: 22px;
-  opacity: .55;
+  opacity: .5;
   animation: floatUp linear infinite;
-  filter: drop-shadow(0 4px 10px rgba(255,255,255,.25));
+  filter: drop-shadow(0 4px 10px rgba(255,255,255,.2));
 }
 @keyframes floatUp{
   0%{ transform: translateY(0) translateX(0) rotate(0deg); opacity:0; }
@@ -64,7 +65,7 @@ h1, h2{ font-family: "Baloo 2", "Poppins", sans-serif; }
   display:block;
   font-weight: 600;
   font-size: 13px;
-  color: rgba(58,18,32,.75);
+  color: rgba(61,36,21,.75);
   margin-bottom: 8px;
 }
 .dots{ display:flex; gap:8px; justify-content:center; }
@@ -74,8 +75,8 @@ h1, h2{ font-family: "Baloo 2", "Poppins", sans-serif; }
   border: 1px solid rgba(255,255,255,.8);
   transition: all .25s ease;
 }
-.dot.done{ background: var(--pink-deep); border-color: var(--pink-deep); }
-.dot.active{ transform: scale(1.35); background: #fff; border-color: var(--pink-deep); }
+.dot.done{ background: var(--coffee-deep); border-color: var(--coffee-deep); }
+.dot.active{ transform: scale(1.35); background: #fff; border-color: var(--coffee-deep); }
 
 /* Screens */
 .screen{
@@ -95,9 +96,9 @@ h1, h2{ font-family: "Baloo 2", "Poppins", sans-serif; }
 
 .card{
   width: 100%;
-  background: var(--white-glass);
+  background: var(--paper-glass);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,.6);
+  border: 1px solid rgba(255,255,255,.5);
   border-radius: 26px;
   box-shadow: var(--shadow);
   padding: 26px 22px;
@@ -105,9 +106,9 @@ h1, h2{ font-family: "Baloo 2", "Poppins", sans-serif; }
 .center-card{ text-align:center; }
 
 .big-emoji{ font-size: 54px; line-height:1; margin-bottom: 6px; }
-.title{ margin: 4px 0 10px; font-size: clamp(26px, 7vw, 34px); color: var(--pink-deep); }
-.subtitle{ margin: 0 0 20px; line-height:1.6; color: rgba(58,18,32,.82); }
-.hint{ margin-top: 14px; font-size: 13px; color: rgba(58,18,32,.6); }
+.title{ margin: 4px 0 10px; font-size: clamp(30px, 8vw, 40px); color: var(--coffee-deep); }
+.subtitle{ margin: 0 0 20px; line-height:1.6; color: rgba(61,36,21,.85); }
+.hint{ margin-top: 14px; font-size: 13px; color: rgba(61,36,21,.6); }
 
 .btn{
   appearance:none;
@@ -115,24 +116,25 @@ h1, h2{ font-family: "Baloo 2", "Poppins", sans-serif; }
   border-radius: 999px;
   padding: 14px 26px;
   font-family: inherit;
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: .02em;
   cursor: pointer;
-  background: #fff;
-  color: var(--pink-deep);
-  box-shadow: 0 10px 24px rgba(0,0,0,.08);
+  background: #fffaf0;
+  color: var(--coffee-deep);
+  box-shadow: 0 10px 24px rgba(74,44,23,.12);
   transition: transform .15s ease;
 }
 .btn:active{ transform: scale(.96); }
 .btn-primary{
-  background: linear-gradient(135deg, var(--pink-deep), var(--pink-3));
+  background: linear-gradient(135deg, var(--coffee-deep), var(--coffee-mid));
   color: #fff;
 }
 
 /* Game card */
 .game-card{ text-align:center; }
-.game-title{ margin: 0 0 6px; font-size: clamp(22px, 6vw, 28px); color: var(--pink-deep); }
-.game-sub{ margin: 0 0 14px; color: rgba(58,18,32,.8); line-height:1.5; }
+.game-title{ margin: 0 0 6px; font-size: clamp(26px, 7vw, 32px); color: var(--coffee-deep); }
+.game-sub{ margin: 0 0 14px; color: rgba(61,36,21,.85); line-height:1.5; font-size: 14px; }
 .counter-row{
   margin-bottom: 12px;
   display:flex;
@@ -142,17 +144,17 @@ h1, h2{ font-family: "Baloo 2", "Poppins", sans-serif; }
 }
 .badge{
   display:inline-block;
-  background: rgba(255,255,255,.7);
+  background: rgba(255,255,255,.65);
   border: 1px solid rgba(255,255,255,.9);
   border-radius: 999px;
   padding: 6px 14px;
-  font-weight: 600;
-  font-size: 13px;
+  font-weight: 400;
+  font-size: 12px;
 }
 .lock-badge{
-  background: rgba(58,18,32,.08);
-  border-color: rgba(58,18,32,.14);
-  color: rgba(58,18,32,.65);
+  background: rgba(61,36,21,.08);
+  border-color: rgba(61,36,21,.14);
+  color: rgba(61,36,21,.65);
 }
 
 .game-stage{
@@ -161,13 +163,13 @@ h1, h2{ font-family: "Baloo 2", "Poppins", sans-serif; }
   height: 46vh;
   min-height: 320px;
   border-radius: 20px;
-  background: rgba(255,255,255,.35);
+  background: rgba(255,255,255,.3);
   border: 1px solid rgba(255,255,255,.5);
   overflow: hidden;
   touch-action: manipulation;
 }
 
-/* Level 1: falling hearts */
+/* Level 1: falling little things */
 .falling-heart{
   position:absolute;
   top: -46px;
@@ -207,21 +209,21 @@ h1, h2{ font-family: "Baloo 2", "Poppins", sans-serif; }
 .mem-card{
   aspect-ratio: 1 / 1;
   border-radius: 14px;
-  background: linear-gradient(145deg, var(--pink-3), var(--pink-deep));
+  background: linear-gradient(145deg, var(--coffee-mid), var(--coffee-dark));
   display:grid;
   place-items:center;
   font-size: clamp(22px, 6vw, 30px);
   cursor:pointer;
   user-select:none;
-  box-shadow: 0 8px 18px rgba(0,0,0,.1);
+  box-shadow: 0 8px 18px rgba(0,0,0,.15);
   transform-style: preserve-3d;
   transition: transform .3s ease, background .2s ease;
 }
 .mem-card .face{ opacity:0; transition: opacity .15s ease; }
-.mem-card.flipped{ background: #fff; }
+.mem-card.flipped{ background: #fffaf0; }
 .mem-card.flipped .face{ opacity:1; }
 .mem-card.matched{
-  background: rgba(255,255,255,.6);
+  background: rgba(255,255,255,.55);
   box-shadow: none;
   cursor:default;
 }
@@ -244,18 +246,19 @@ h1, h2{ font-family: "Baloo 2", "Poppins", sans-serif; }
 .word-slot{
   width: 34px; height: 40px;
   border-radius: 8px;
-  background: rgba(255,255,255,.5);
+  background: rgba(255,255,255,.45);
   border: 2px dashed rgba(255,255,255,.9);
   display:grid;
   place-items:center;
-  font-weight: 800;
+  font-weight: 700;
   font-size: 18px;
-  color: var(--pink-deep);
+  font-family: "Special Elite", monospace;
+  color: var(--coffee-deep);
 }
 .word-slot.filled{
-  background: #fff;
+  background: #fffaf0;
   border-style: solid;
-  border-color: var(--pink-deep);
+  border-color: var(--coffee-deep);
 }
 .balloon-stage{ height: 50vh; }
 .balloon{
@@ -265,12 +268,13 @@ h1, h2{ font-family: "Baloo 2", "Poppins", sans-serif; }
   border-radius: 50% 50% 48% 48%;
   display:grid;
   place-items:center;
-  font-weight: 800;
+  font-weight: 700;
+  font-family: "Special Elite", monospace;
   color:#fff;
-  font-size: 20px;
+  font-size: 18px;
   cursor:pointer;
   user-select:none;
-  box-shadow: inset -8px -8px 16px rgba(0,0,0,.12), 0 10px 18px rgba(0,0,0,.15);
+  box-shadow: inset -8px -8px 16px rgba(0,0,0,.15), 0 10px 18px rgba(0,0,0,.18);
   animation: bob 3s ease-in-out infinite;
 }
 .balloon::after{
@@ -299,8 +303,8 @@ h1, h2{ font-family: "Baloo 2", "Poppins", sans-serif; }
   75%{ margin-left:6px; }
 }
 
-/* Level 4: forgive-o-meter */
-.forgive-stage{
+/* Level 4: one-last-thing (runaway button) */
+.meter-stage{
   position: relative;
   min-height: 220px;
   display:flex;
@@ -309,70 +313,117 @@ h1, h2{ font-family: "Baloo 2", "Poppins", sans-serif; }
   justify-content:center;
   gap: 22px;
 }
-.btn-grow{ font-size: 18px; transition: transform .2s ease; }
+.btn-grow{ font-size: 17px; transition: transform .2s ease; }
 .btn-runaway{
   position: relative;
-  background: #fff;
-  color: rgba(58,18,32,.7);
+  background: #fffaf0;
+  color: rgba(61,36,21,.7);
 }
 
-/* Final */
+/* Final: coffee-stained crumpled letter */
 .final-card{ padding-bottom: 30px; }
-.video-wrap{
+.letter-wrap{
   width:100%;
-  border-radius: 18px;
-  overflow:hidden;
-  background:#000;
-  margin: 6px 0 18px;
-  box-shadow: 0 14px 30px rgba(0,0,0,.25);
-}
-.video-wrap video{
-  width:100%;
-  display:block;
-  max-height: 75vh;
-  object-fit: contain;
-  background:#000;
-}
-.video-open-card{
+  margin: 10px 0 20px;
   display:flex;
-  flex-direction: column;
-  align-items:center;
   justify-content:center;
-  gap: 14px;
-  padding: 60px 20px;
-  text-decoration:none;
-  background: linear-gradient(160deg, #3a1220, #1a0810);
+  min-height: 300px;
+}
+
+.letter-crumpled{
+  appearance:none;
+  border:0;
   cursor:pointer;
+  width: 220px;
+  height: 220px;
+  border-radius: 46% 54% 51% 49% / 53% 47% 53% 47%;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,.5), transparent 40%),
+    radial-gradient(circle at 70% 65%, rgba(74,44,23,.18), transparent 45%),
+    linear-gradient(155deg, #f2e2ba, #d8b579 60%, #c79a5c);
+  box-shadow: 0 18px 34px rgba(74,44,23,.35), inset 0 0 30px rgba(74,44,23,.15);
+  position: relative;
+  overflow: hidden;
+  animation: crumpleIdle 4s ease-in-out infinite;
 }
-.video-open-play{
-  width: 72px;
-  height: 72px;
+@keyframes crumpleIdle{
+  0%,100%{ transform: rotate(-2deg); }
+  50%{ transform: rotate(2deg); }
+}
+.letter-crumpled .crease{
+  position:absolute;
+  background: rgba(74,44,23,.16);
+  filter: blur(1px);
+}
+.crease-1{ width:140%; height:3px; top: 35%; left:-20%; transform: rotate(18deg); }
+.crease-2{ width:140%; height:3px; top: 55%; left:-25%; transform: rotate(-14deg); }
+.crease-3{ width:3px; height:140%; left: 40%; top:-20%; transform: rotate(10deg); }
+.crease-4{ width:3px; height:120%; left: 62%; top:-10%; transform: rotate(-16deg); background: rgba(255,255,255,.35); }
+.letter-crumpled-hint{
+  position:absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: var(--coffee-dark);
+  background: rgba(255,255,255,.6);
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.letter-paper{
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  padding: 34px 26px 28px;
+  border-radius: 6px 6px 14px 14px;
+  background:
+    radial-gradient(circle at 15% 90%, rgba(139,90,43,.10), transparent 40%),
+    linear-gradient(180deg, #faf1d9, #f1e0b3);
+  box-shadow: 0 22px 50px rgba(74,44,23,.35);
+  animation: unfold .5s cubic-bezier(.2,.9,.3,1.1);
+  transform-origin: top center;
+}
+@keyframes unfold{
+  0%{ transform: scaleY(.4) scale(.85); opacity:0; }
+  100%{ transform: scaleY(1) scale(1); opacity:1; }
+}
+.letter-paper[hidden]{ display:none; }
+
+.washi-tape{
+  position:absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-3deg);
+  width: 90px;
+  height: 26px;
+  background: rgba(185, 83, 31, .55);
+  border: 1px solid rgba(255,255,255,.3);
+  opacity: .85;
+}
+
+.coffee-stain{
+  position:absolute;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--pink-deep), var(--pink-3));
-  color:#fff;
-  font-size: 26px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  box-shadow: 0 10px 30px rgba(255,61,104,.5);
+  border: 3px solid rgba(139,90,43,.18);
+  background: radial-gradient(circle, transparent 55%, rgba(139,90,43,.08) 70%, transparent 78%);
+  pointer-events:none;
 }
-.video-open-text{
-  color:#fff;
-  font-weight: 600;
-  font-size: 15px;
+.coffee-stain-1{ width: 90px; height: 90px; top: -10px; right: -18px; }
+.coffee-stain-2{ width: 60px; height: 60px; bottom: 10px; left: -14px; border-color: rgba(139,90,43,.14); }
+
+.letter-text{
+  font-family: "Caveat", cursive;
+  font-size: clamp(19px, 4.4vw, 22px);
+  line-height: 1.5;
+  color: var(--coffee-dark);
+  text-align: left;
 }
-.video-wrap video[hidden],
-.video-open-card[hidden]{ display:none; }
-.video-fallback{
-  padding: 40px 12px;
-  color: rgba(255,255,255,.85);
-  text-align:center;
-}
-.final-note{
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--pink-deep);
-  margin-bottom: 18px;
+.letter-text p{ margin: 0 0 14px; }
+.letter-signature{
+  margin-top: 8px;
+  font-size: clamp(22px, 5vw, 26px);
 }
 
 /* Confetti */
@@ -402,7 +453,7 @@ h1, h2{ font-family: "Baloo 2", "Poppins", sans-serif; }
   align-items:center;
   justify-content:center;
   padding: 20px;
-  background: rgba(40, 10, 20, .55);
+  background: rgba(45, 27, 15, .55);
   backdrop-filter: blur(6px);
   opacity: 0;
   transition: opacity .25s ease;
@@ -413,7 +464,7 @@ h1, h2{ font-family: "Baloo 2", "Poppins", sans-serif; }
 .unlock-card{
   position: relative;
   width: min(360px, 100%);
-  background: #fff;
+  background: #fffaf0;
   border-radius: 26px;
   padding: 34px 26px 28px;
   text-align:center;
@@ -444,8 +495,8 @@ h1, h2{ font-family: "Baloo 2", "Poppins", sans-serif; }
   100%{ transform: scale(1) rotate(0deg); }
 }
 
-.unlock-title{ margin: 0 0 6px; color: var(--pink-deep); font-size: 24px; }
-.unlock-sub{ margin: 0 0 20px; color: rgba(58,18,32,.75); }
+.unlock-title{ margin: 0 0 6px; color: var(--coffee-deep); font-size: 26px; }
+.unlock-sub{ margin: 0 0 20px; color: rgba(61,36,21,.8); font-size: 14px; }
 
 .sparkle-piece{
   position:absolute;
@@ -463,7 +514,7 @@ h1, h2{ font-family: "Baloo 2", "Poppins", sans-serif; }
   z-index:1;
   text-align:center;
   font-size: 12px;
-  color: rgba(255,255,255,.85);
+  color: rgba(255,255,255,.9);
   padding: 6px 0 4px;
 }
 
